@@ -1,0 +1,24 @@
+name: Remote Code Update
+on:
+  repository_dispatch:
+    types: [update-code]
+permissions:
+  contents: write
+jobs:
+  update-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Write Updated File
+        run: |
+          mkdir -p $(dirname "${{ github.event.client_payload.path }}")
+          cat << 'EOF' > "${{ github.event.client_payload.path }}"
+          ${{ github.event.client_payload.content }}
+          EOF
+      - name: Commit and Push
+        run: |
+          git config --global user.name "KiraayaShield Bot"
+          git config --global user.email "bot@kiraayashield.local"
+          git add .
+          git commit -m "${{ github.event.client_payload.message || 'chore: remote update' }}" || exit 0
+          git push

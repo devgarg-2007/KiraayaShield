@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KiraayaShield Pro | AI Tenant Rights & Deposit Recovery Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#1e1b4b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="ambient-mesh text-slate-800 dark:text-slate-100 min-h-screen flex flex-col selection:bg-indigo-600 selection:text-white">
+
+  <!-- TOP TELEMETRY & HACKATHON BANNER -->
+  <div class="bg-slate-900 text-slate-200 text-xs py-2 px-4 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-0.5 rounded-full font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Hack the Unseen — Live Prototype v2.0
+        </span>
+        <span class="hidden sm:inline text-slate-400">Model Tenancy Act 2021 &amp; Consumer Protection Act 2019 Compliant Engine</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span id="api-status-badge" class="inline-flex items-center gap-1.5 text-emerald-400 font-mono-code">
+          <i class="fa-solid fa-server text-[10px]"></i> API: Hybrid Ready (Vercel + Local Engine)
+        </span>
+        <a href="legacy_v1_show/index.html" target="_blank" class="text-amber-300 hover:text-amber-200 underline font-medium flex items-center gap-1">
+          <i class="fa-solid fa-up-right-from-square text-[10px]"></i> Open v1 Show Mockup
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOOGLE M3 + MICROSOFT FLUENT 2 GLOBAL HEADER -->
+  <header class="sticky top-0 z-40 bg-white/85 dark:bg-slate-900/85 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('overview')">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-500 to-sky-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/25">
+          <i class="fa-solid fa-shield-halved text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-display font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">KiraayaShield</span>
+            <span class="text-[10px] font-bold uppercase tracking-wider bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-md border border-indigo-200 dark:border-indigo-800">AI Agent</span>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block" data-i18n="tagline">Autonomous Tenant Rights &amp; Security Deposit Recovery</p>
+        </div>
+      </div>
+
+      <!-- Google-style Omni Command Search -->
+      <div class="relative flex-1 max-w-md mx-2 hidden md:block">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+        <input
+          id="omni-search"
+          type="text"
+          placeholder="Search clauses, 'Section 11', 'Urban Company rates', 'NCH complaint'... (Ctrl+K)"
+          oninput="handleOmniSearch(this.value)"
+          class="w-full pl-10 pr-16 py-2 rounded-full bg-slate-100 dark:bg-slate-800/90 border border-transparent focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 text-sm outline-none transition"
+        />
+        <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono-code bg-white dark:bg-slate-700 text-slate-500 dark:text-slate-300 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-600">Ctrl K</kbd>
+      </div>
+
+      <!-- Right Controls: Case Preset, Vernacular Language, Theme, AI Copilot -->
+      <div class="flex items-center gap-2">
+        <!-- Demo Case Preset Switcher -->
+        <select
+          id="case-preset-select"
+          onchange="loadCasePreset(this.value)"
+          class="text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl px-3 py-2 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
+          title="Load Sample Demo Preset (Sample Data)"
+        >
+          <option value="noida">📍 Demo 1: Noida Sec-75 2BHK (Sample Preset)</option>
+          <option value="bangalore">📍 Demo 2: Bengaluru HSR PG (Sample Preset)</option>
+          <option value="mumbai">📍 Demo 3: Mumbai Andheri Flat (Sample Preset)</option>
+        </select>
+
+        <!-- Multi-Lingual Vernacular Switcher -->
+        <select
+          id="lang-select"
+          onchange="setLanguage(this.value)"
+          class="text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 rounded-xl px-2.5 py-2 border border-indigo-200 dark:border-indigo-800 outline-none"
+          title="Multi-Lingual Vernacular Support"
+        >
+          <option value="en">🌐 EN (English)</option>
+          <option value="hi">🇮🇳 हिंदी (Hindi)</option>
+          <option value="ta">🇮🇳 தமிழ் (Tamil)</option>
+          <option value="te">🇮🇳 తెలుగు (Telugu)</option>
+          <option value="kn">🇮🇳 ಕನ್ನಡ (Kannada)</option>
+          <option value="mr">🇮🇳 मराठी (Marathi)</option>
+        </select>
+
+        <!-- Dark Mode Button -->
+        <button
+          onclick="toggleTheme()"
+          class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 transition"
+          title="Toggle Light/Dark Theme"
+        >
+          <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
+        </button>
+
+        <!-- Fluent 2 AI Copilot Side-Drawer Button -->
+        <button
+          onclick="toggleCopilot()"
+          class="bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-sm flex items-center gap-2 transition"
+        >
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span class="hidden sm:inline" data-i18n="copilotBtn">AI Copilot</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- GOOGLE M3 PILL NAVIGATION BAR -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar border-t border-slate-100 dark:border-slate-800/70">
+      <button onclick="switchTab('overview')" id="nav-overview" class="m3-pill-tab active px-4 py-2 rounded-full text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <i class="fa-solid fa-gauge-high"></i> <span data-i18n="navOverview">1. Command Center</span>
+      </button>
+      <button onclick="switchTab('lease')" id="nav-lease" class="m3-pill-tab px-4 py-2 rounded-full text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <i class="fa-solid fa-file-contract"></i> <span data-i18n="navLease">2. AI Lease Scanner</span>
+        <span class="bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 text-[10px] font-bold px-1.5 py-0.5 rounded-full">3 Flags</span>
+      </button>
+      <button onclick="switchTab('evidence')" id="nav-evidence" class="m3-pill-tab px-4 py-2 rounded-full text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <i class="fa-solid fa-camera-retro"></i> <span data-i18n="navEvidence">3. CV Evidence Vault</span>
+      </button>
+      <button onclick="switchTab('scraper')" id="nav-scraper" class="m3-pill-tab px-4 py-2 rounded-full text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <i class="fa-solid fa-spider"></i> <span data-i18n="navScraper">4. Autonomous Web Agent</span>
+      </button>
+      <button onclick="switchTab('redressal')" id="nav-redressal" class="m3-pill-tab px-4 py-2 rounded-full text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <i class="fa-solid fa-scale-balanced"></i> <span data-i18n="navRedressal">5. Legal Notice &amp; NCH Filing</span>
+      </button>
+      <button onclick="switchTab('escrow')" id="nav-escrow" class="m3-pill-tab px-4 py-2 rounded-full text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <i class="fa-solid fa-vault"></i> <span data-i18n="navEscrow">6. Smart Escrow Simulation &amp; Registry</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+    <!-- LIVE CASE SUMMARY RIBBON (Fluent 2 Status Bar) -->
+    <div class="fluent-island rounded-2xl p-4 grid grid-cols-2 lg:grid-cols-5 gap-4 items-center">
+      <div class="col-span-2 lg:col-span-1 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-slate-800 pb-3 lg:pb-0 pr-3">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] uppercase tracking-wider font-bold text-indigo-600 dark:text-indigo-400">Active Dispute Case</span>
+          <span id="case-id-badge" class="text-[10px] font-mono-code text-amber-600 dark:text-amber-400"><i class="fa-solid fa-flask mr-1"></i>Demo Preset</span>
+        </div>
+        <h3 id="ribbon-case-title" class="font-display font-bold text-sm text-slate-900 dark:text-white truncate mt-0.5">Noida Sec-75 • 2BHK Flat</h3>
+        <p id="ribbon-tenant-name" class="text-xs text-slate-500">Tenant: Mahit Agarwal</p>
+      </div>
+      <div>
+        <span class="text-xs text-slate-500 dark:text-slate-400">Security Deposit Paid</span>
+        <div id="ribbon-deposit" class="font-display font-extrabold text-lg text-slate-900 dark:text-white">₹54,000</div>
+        <span id="ribbon-ratio-badge" class="text-[10px] font-semibold text-rose-600 dark:text-rose-400">3.0x Rent (Exceeds 2x MTA Cap)</span>
+      </div>
+      <div>
+        <span class="text-xs text-slate-500 dark:text-slate-400">Landlord Unfair Deduction</span>
+        <div id="ribbon-deduction" class="font-display font-extrabold text-lg text-rose-600 dark:text-rose-400">₹32,000</div>
+        <span class="text-[10px] text-slate-500">Claimed for Paint &amp; Deep Clean</span>
+      </div>
+      <div>
+        <span class="text-xs text-slate-500 dark:text-slate-400">AI Verified Fair Deduction</span>
+        <div id="ribbon-fair" class="font-display font-extrabold text-lg text-amber-600 dark:text-amber-400">₹2,349</div>
+        <span class="text-[10px] text-emerald-600 dark:text-emerald-400">Normal Wear &amp; Tear Exempt</span>
+      </div>
+      <div class="bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/70 rounded-xl p-3 flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold uppercase text-emerald-700 dark:text-emerald-300">Net Recoverable Refund</span>
+          <div id="ribbon-recoverable" class="font-display font-extrabold text-xl text-emerald-700 dark:text-emerald-300">₹51,651</div>
+          <span class="text-[10px] text-emerald-600 dark:text-emerald-400">+ 18% p.a. statutory interest</span>
+        </div>
+        <button onclick="switchTab('redressal')" class="bg-emerald-600 hover:bg-emerald-700 text-white p-2.5 rounded-xl shadow transition" title="Generate Legal Notice">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===================================================================
+         TAB 1: COMMAND CENTER & OVERVIEW
+         =================================================================== -->
+    <section id="tab-overview" class="workspace-pane active space-y-6">
+      <!-- Hero Split Banner -->
+      <div class="fluent-island rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-7 space-y-5">
+            <div class="inline-flex items-center gap-2 bg-indigo-50 dark:bg-indigo-950/90 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-3.5 py-1.5 rounded-full text-xs font-semibold">
+              <i class="fa-solid fa-bolt text-amber-500"></i>
+              <span data-i18n="heroBadge">Hack the Unseen • Solving India's Silent ₹12,000 Cr Rental Deposit Crisis</span>
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15]">
+              <span data-i18n="heroTitle1">Turn Unfair Security Deposit Deductions Into</span>
+              <span class="bg-gradient-to-r from-indigo-600 via-sky-500 to-emerald-500 bg-clip-text text-transparent" data-i18n="heroTitle2"> Evidence-Backed Refunds.</span>
+            </h1>
+            <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="heroDesc">
+              Students and young professionals across India silently lose 30–50% of their security deposit to arbitrary "painting and deep cleaning" forfeitures. KiraayaShield combines Legal NLP, Computer Vision room auditing, and an Autonomous Hyperlocal Web Scraper to build a ready-to-file National Consumer Helpline (INGRAM) &amp; e-Daakhil case in under 90 seconds.
+            </p>
+            <div class="flex flex-wrap gap-3 pt-1">
+              <button onclick="switchTab('lease')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-2xl shadow-lg shadow-indigo-500/25 flex items-center gap-2 text-sm transition transform hover:-translate-y-0.5">
+                <i class="fa-solid fa-magnifying-glass-chart"></i> Start Guided Case Audit
+              </button>
+              <button onclick="runFullAutomatedDemo()" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:opacity-90 font-semibold px-5 py-3 rounded-2xl flex items-center gap-2 text-sm transition">
+                <i class="fa-solid fa-play text-emerald-400 dark:text-indigo-600"></i> Run 1-Click Live Judge Demo
+              </button>
+              <button onclick="switchTab('redressal')" class="bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-400 font-semibold px-5 py-3 rounded-2xl flex items-center gap-2 text-sm transition">
+                <i class="fa-solid fa-file-pdf text-rose-500"></i> Preview Legal Notice PDF
+              </button>
+            </div>
+
+            <!-- Why Not Just ChatGPT? Comparison Pill -->
+            <div class="pt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="p-3 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60">
+                <div class="text-xs font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-spider"></i> Live Market Scraping
+                </div>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Benchmarks Urban Company &amp; local vendor rates to disprove inflated landlord repair bills.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60">
+                <div class="text-xs font-bold text-sky-600 dark:text-sky-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-eye"></i> CV Wear &amp; Tear Proof
+                </div>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Audits Move-In vs Move-Out photos with SHA-256 chain of custody &amp; EXIF verification.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60">
+                <div class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-gavel"></i> NCH &amp; e-Daakhil Ready
+                </div>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Cites Model Tenancy Act Sec 11 &amp; Contract Act Sec 73 with 18% p.a. interest calculation.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive Video + Live Agent Architecture Card -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-950 shadow-xl relative group">
+              <div class="bg-slate-900 px-4 py-2.5 flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  <span class="text-[11px] font-mono-code text-slate-400 ml-2">public/video.mp4 • AI Agent Pipeline</span>
+                </div>
+                <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded font-mono-code">60 FPS Demo</span>
+              </div>
+              <!-- Video Tag (automatically plays public/video.mp4 if present, with sleek animated fallback overlay) -->
+              <div class="relative aspect-video bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-center justify-center overflow-hidden">
+                <video id="demo-video-player" src="public/video.mp4" controls class="w-full h-full object-cover z-10" onerror="this.style.display='none'; document.getElementById('video-fallback-Stage').classList.remove('hidden');">
+                </video>
+                <div id="video-fallback-Stage" class="hidden absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                  <div class="laser-line"></div>
+                  <div class="w-16 h-16 rounded-2xl bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-indigo-400 text-2xl mb-3 shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-shield-halved animate-pulse"></i>
+                  </div>
+                  <h4 class="text-white font-display font-bold text-base">KiraayaShield Autonomous Agent Core</h4>
+                  <p class="text-slate-400 text-xs max-w-xs mt-1">Place your downloaded <code class="text-indigo-300">video.mp4</code> inside <code class="text-indigo-300">public/video.mp4</code> or click below to run the live interactive simulation.</p>
+                  <button onclick="runFullAutomatedDemo()" class="mt-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow">
+                    <i class="fa-solid fa-bolt mr-1"></i> Trigger Live Agent Simulation
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive 4-Stage Pipeline Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div onclick="switchTab('lease')" class="cursor-pointer p-3 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition text-center">
+                <div class="text-indigo-600 dark:text-indigo-400 text-lg mb-1"><i class="fa-solid fa-file-shield"></i></div>
+                <div class="text-[11px] font-bold">1. Lease NLP</div>
+                <div class="text-[10px] text-slate-500">Sec 11 Audit</div>
+              </div>
+              <div onclick="switchTab('evidence')" class="cursor-pointer p-3 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition text-center">
+                <div class="text-sky-600 dark:text-sky-400 text-lg mb-1"><i class="fa-solid fa-camera"></i></div>
+                <div class="text-[11px] font-bold">2. CV Audit</div>
+                <div class="text-[10px] text-slate-500">Wear &amp; Tear</div>
+              </div>
+              <div onclick="switchTab('scraper')" class="cursor-pointer p-3 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition text-center">
+                <div class="text-amber-600 dark:text-amber-400 text-lg mb-1"><i class="fa-solid fa-spider"></i></div>
+                <div class="text-[11px] font-bold">3. Web Agent</div>
+                <div class="text-[10px] text-slate-500">Rate Scraper</div>
+              </div>
+              <div onclick="switchTab('redressal')" class="cursor-pointer p-3 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition text-center">
+                <div class="text-emerald-600 dark:text-emerald-400 text-lg mb-1"><i class="fa-solid fa-scale-balanced"></i></div>
+                <div class="text-[11px] font-bold">4. NCH Filing</div>
+                <div class="text-[10px] text-slate-500">Legal Notice</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERSISTENT CASE MANAGEMENT (MongoDB Atlas) -->
+      <div class="fluent-island rounded-3xl p-6 sm:p-8 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200/80 dark:border-slate-800">
+          <div>
+            <div class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+              <i class="fa-solid fa-database"></i> Persistent Case Management • MongoDB Atlas
+            </div>
+            <h2 class="text-xl sm:text-2xl font-display font-bold text-slate-900 dark:text-white mt-1">
+              Case Records &amp; Persistent Evidence
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Saved cases persist in MongoDB Atlas across page refreshes. Preset cases remain available above as demo data.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="createNewEmptyCase()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-2 transition">
+              <i class="fa-solid fa-plus text-indigo-500"></i> New Case Draft
+            </button>
+            <button onclick="saveCurrentCaseToDB()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow flex items-center gap-2 transition">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Save as New Case
+            </button>
+            <button onclick="updateCurrentCaseInDB()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow flex items-center gap-2 transition">
+              <i class="fa-solid fa-floppy-disk"></i> Update Active Case
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left: Case Instructions -->
+          <div class="lg:col-span-5 p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-700 dark:text-slate-300">FastAPI + MongoDB Engine</span>
+              <span class="text-[10px] font-mono-code text-indigo-600 dark:text-indigo-400">REST API v1</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              When you modify financial parameters, extract clauses, or upload proof, save your case to store it persistently in your MongoDB database. You can reload previously saved cases anytime from the list on the right.
+            </p>
+            <div class="pt-2 flex flex-wrap gap-2 text-xs">
+              <button onclick="switchTab('lease')" class="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-arrow-right text-[10px]"></i> Edit Lease Details
+              </button>
+              <span class="text-slate-300">•</span>
+              <button onclick="switchTab('evidence')" class="text-sky-600 dark:text-sky-400 hover:underline font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-arrow-right text-[10px]"></i> Add Evidence
+              </button>
+              <span class="text-slate-300">•</span>
+              <button onclick="switchTab('redressal')" class="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-arrow-right text-[10px]"></i> Export Legal Notice
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Saved Cases in Database -->
+          <div class="lg:col-span-7 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-700 dark:text-slate-300">
+                <i class="fa-solid fa-folder-open text-amber-500 mr-1.5"></i> Saved Cases in Database
+              </span>
+              <button onclick="refreshSavedCasesList()" class="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-rotate text-[10px]"></i> Refresh List
+              </button>
+            </div>
+            <div id="saved-cases-list" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+              <div class="text-xs text-slate-400 text-center py-4">Loading saved cases...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 2: AI LEASE ANALYZER & RED-FLAG SCORING
+         =================================================================== -->
+    <section id="tab-lease" class="workspace-pane space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Lease Upload & Financial Parameters (5 cols) -->
+        <div class="lg:col-span-5 fluent-island rounded-2xl p-6 space-y-5">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Module 01 • Legal NLP</span>
+              <h2 class="text-xl font-display font-bold text-slate-900 dark:text-white">Upload or Paste Rental Agreement</h2>
+            </div>
+            <span class="text-xs bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-lg font-medium">MTA 2021 Engine</span>
+          </div>
+
+          <!-- Real Drag & Drop Upload Box -->
+          <label for="lease-file-input" class="block border-2 border-dashed border-indigo-300 dark:border-indigo-700 hover:border-indigo-500 bg-indigo-50/40 dark:bg-indigo-950/20 rounded-2xl p-5 text-center cursor-pointer transition">
+            <input id="lease-file-input" type="file" accept=".txt,.pdf,.doc,.docx,.md" class="hidden" onchange="handleLeaseFileUpload(event)" />
+            <div class="w-11 h-11 rounded-full bg-indigo-100 dark:bg-indigo-900/60 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mx-auto mb-2">
+              <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+            </div>
+            <p class="text-xs font-semibold text-slate-800 dark:text-slate-200">Click to upload Lease PDF / TXT or drag &amp; drop</p>
+            <p id="uploaded-lease-filename" class="text-[11px] text-slate-500 mt-1">Currently loaded: <span class="font-mono-code text-indigo-600 dark:text-indigo-400">Noida_Sec75_Lease_Agreement_2026.pdf</span></p>
+          </label>
+
+          <!-- Rent & Deposit Inputs for Section 11 Verification -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Monthly Rent (₹)</label>
+              <input id="input-monthly-rent" type="number" value="18000" oninput="recalculateLeaseMetrics()" class="w-full px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Security Deposit Paid (₹)</label>
+              <input id="input-deposit-paid" type="number" value="54000" oninput="recalculateLeaseMetrics()" class="w-full px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold outline-none focus:border-indigo-500" />
+            </div>
+          </div>
+
+          <!-- Raw Lease Clauses Textarea -->
+          <div>
+            <div class="flex justify-between items-center mb-1.5">
+              <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Extracted Lease Clauses (Editable)</label>
+              <button onclick="loadSampleLeaseClauses()" class="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline font-medium">Reset Sample Clauses</button>
+            </div>
+            <textarea id="lease-raw-text" rows="7" class="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-xs font-mono-code text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500">CLAUSE 4 (SECURITY DEPOSIT): The Lessee shall pay an interest-free security deposit of Rs. 54,000/- (equivalent to 3 months' rent) prior to taking possession.
+
+CLAUSE 14 (MANDATORY PAINTING & CLEANING DEDUCTION): Upon vacating the premises, the Lessor shall mandatorily deduct 50% of the security deposit towards repainting, acid wash deep-cleaning, and general wear and tear, regardless of the condition of the flat at handover.
+
+CLAUSE 19 (FINALITY OF LANDLORD DEDUCTIONS): The Lessor's assessment of repair charges, electrical replacements, and plumbing deductions shall be final and binding, and the Lessor shall not be required to produce third-party vendor bills.</textarea>
+          </div>
+
+          <button onclick="runLeaseScanAPI()" id="btn-scan-lease" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md flex items-center justify-center gap-2 text-sm transition">
+            <i class="fa-solid fa-microchip"></i> Run Deep Legal NLP Clause Scan
+          </button>
+        </div>
+
+        <!-- Right Column: Clause Red-Flag Report & Statutory Citations (7 cols) -->
+        <div class="lg:col-span-7 fluent-island rounded-2xl p-6 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200/80 dark:border-slate-800">
+            <div>
+              <h3 class="text-xl font-display font-bold text-slate-900 dark:text-white">Predatory Clause Diagnostic Report</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Benchmarked against Model Tenancy Act 2021, Indian Contract Act 1872 &amp; Consumer Protection Act 2019</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-3.5 py-2 rounded-2xl">
+                <div class="text-right">
+                  <span class="block text-[10px] font-bold uppercase text-emerald-600 dark:text-emerald-400">Evidence Readiness</span>
+                  <span id="case-readiness-score" class="font-display font-extrabold text-2xl text-emerald-600 dark:text-emerald-400">75 / 100</span>
+                </div>
+                <i class="fa-solid fa-clipboard-check text-2xl text-emerald-500"></i>
+              </div>
+              <div class="flex items-center gap-3 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 px-3.5 py-2 rounded-2xl">
+                <div class="text-right">
+                  <span class="block text-[10px] font-bold uppercase text-rose-600 dark:text-rose-400">Predatory Risk</span>
+                  <span id="lease-risk-score" class="font-display font-extrabold text-2xl text-rose-600 dark:text-rose-400">86 / 100</span>
+                </div>
+                <i class="fa-solid fa-triangle-exclamation text-2xl text-rose-500"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Informational Notice & Score Definition -->
+          <div class="p-3 rounded-xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 flex items-start gap-3 text-xs text-indigo-950 dark:text-indigo-200">
+            <i class="fa-solid fa-circle-info text-indigo-500 mt-0.5 text-sm"></i>
+            <div>
+              <span class="font-bold">Informational Evaluation:</span> This AI assessment provides statutory evidentiary benchmarking (Model Tenancy Act 2021) and does not constitute a legal verdict. The <strong>Evidence Readiness Score</strong> measures evidence completeness and documentation depth, not dispute win probability.
+            </div>
+          </div>
+
+          <!-- Dynamic Findings Container -->
+          <div id="lease-findings-list" class="space-y-4">
+            <!-- Populated dynamically by app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 3: EVIDENCE VAULT, COMPUTER VISION AUDITOR & WHATSAPP PARSER
+         =================================================================== -->
+    <section id="tab-evidence" class="workspace-pane space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left 7 Cols: Computer Vision Move-In vs Move-Out Auditor -->
+        <div class="lg:col-span-7 fluent-island rounded-2xl p-6 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">Module 02 • Computer Vision &amp; Chain of Custody</span>
+              <h2 class="text-xl font-display font-bold text-slate-900 dark:text-white">Move-In vs. Move-Out Room Condition Auditor</h2>
+            </div>
+            <div class="flex gap-1.5">
+              <button onclick="selectCVRoomPreset('wall')" class="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold">Living Room Wall</button>
+              <button onclick="selectCVRoomPreset('bath')" class="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-indigo-50">Bathroom Fittings</button>
+              <button onclick="selectCVRoomPreset('kitchen')" class="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-indigo-50">Kitchen Slab</button>
+            </div>
+          </div>
+
+          <!-- Custom Photo Upload Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+            <div class="text-xs">
+              <span class="font-bold text-slate-800 dark:text-slate-200"><i class="fa-solid fa-camera text-indigo-500 mr-1"></i> Upload Your Own Move-Out Photo:</span>
+              <span class="text-slate-500 ml-1">Generates live SHA-256 hash &amp; CV Wear-and-Tear bounding boxes</span>
+            </div>
+            <label class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 hover:border-indigo-500 text-xs font-semibold px-3.5 py-1.5 rounded-lg cursor-pointer transition">
+              <input type="file" accept="image/*" class="hidden" onchange="handleEvidencePhotoUpload(event)" />
+              <i class="fa-solid fa-upload mr-1 text-indigo-600"></i> Choose Image
+            </label>
+          </div>
+
+          <!-- Side-by-Side Visual Comparison Stage -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Move-In Baseline Card -->
+            <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-900 relative">
+              <div class="bg-slate-950/90 text-white text-[11px] px-3 py-2 flex justify-between items-center">
+                <span class="font-semibold"><i class="fa-solid fa-camera text-slate-400 mr-1"></i> Reference Move-In Baseline (Preset Photo)</span>
+                <span class="font-mono-code text-[10px] text-slate-400">Demo Reference</span>
+              </div>
+              <div class="h-52 relative bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800 flex items-center justify-center overflow-hidden">
+                <img id="cv-movein-img" src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=700&q=80" alt="Move-In Condition" class="w-full h-full object-cover opacity-90" />
+                <div class="absolute bottom-2 left-2 right-2 bg-slate-950/80 backdrop-blur px-2.5 py-1.5 rounded-lg text-[10px] font-mono-code text-slate-300">
+                  Sample Condition Baseline • Informational Reference Only
+                </div>
+              </div>
+            </div>
+
+            <!-- Move-Out Evidence Card -->
+            <div class="rounded-2xl overflow-hidden border-2 border-indigo-500/80 bg-slate-900 relative">
+              <div class="bg-indigo-950/95 text-white text-[11px] px-3 py-2 flex justify-between items-center">
+                <span class="font-semibold"><i class="fa-solid fa-camera-retro text-indigo-400 mr-1"></i> Move-Out Photographic Evidence</span>
+                <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded text-[10px] font-bold">Evidence Vault</span>
+              </div>
+              <div class="h-52 relative bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800 flex items-center justify-center overflow-hidden">
+                <img id="cv-moveout-img" src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=700&q=80" alt="Move-Out Condition" class="w-full h-full object-cover" />
+                <div class="laser-line"></div>
+                <div id="cv-hash-banner" class="absolute bottom-2 left-2 right-2 bg-slate-950/85 backdrop-blur px-2.5 py-1.5 rounded-lg text-[10px] font-mono-code text-emerald-300 truncate">
+                  SHA-256 Digest: Upload photo to compute cryptographic hash (Chain-of-Custody)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CV Verdict Card -->
+          <div id="cv-verdict-box" class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
+            <i class="fa-solid fa-circle-info text-indigo-500 text-xl mt-0.5"></i>
+            <div class="text-xs space-y-1">
+              <div class="font-bold text-slate-800 dark:text-slate-200">Evidence Vault • Cryptographic Integrity &amp; Damage Classification</div>
+              <p class="text-slate-600 dark:text-slate-300 leading-relaxed">Upload move-out photos to compute genuine SHA-256 hashes and extract EXIF camera metadata. Automated damage classification is a demonstration aid; actual repair liability is governed by Schedule II of the Model Tenancy Act 2021.</p>
+            </div>
+          </div>
+
+          <!-- Case Evidence Metadata Log -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-200">
+                <i class="fa-solid fa-list-check text-indigo-500 mr-1.5"></i> Attached Evidence Metadata Log
+              </span>
+              <span class="text-[10px] font-mono-code text-slate-400">Indexed in MongoDB</span>
+            </div>
+            <div id="case-evidence-list" class="space-y-2 max-h-40 overflow-y-auto">
+              <div class="p-2 text-center text-xs text-slate-400">
+                <i class="fa-solid fa-inbox mr-1"></i> No persistent evidence records attached to this case yet. Upload photos above to log evidence.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: WhatsApp Chat & UPI Proof Parser -->
+        <div class="lg:col-span-5 fluent-island rounded-2xl p-6 space-y-4">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Timeline &amp; Admissions</span>
+            <h3 class="text-xl font-display font-bold text-slate-900 dark:text-white">WhatsApp Chat &amp; UPI Receipt Parser</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Automatically extracts 30-day vacating notice proof &amp; arbitrary deduction admissions</p>
+          </div>
+
+          <textarea id="whatsapp-raw-input" rows="7" class="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-xs font-mono-code text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-500">[25/09/2026, 10:14 AM] Mahit Agarwal: Sir, as per our agreement, please treat this as my formal 30-day notice. I will vacate Flat 402 on 26/10/2026.
+[25/09/2026, 11:02 AM] Landlord Sharma Ji: Okay noted.
+[26/10/2026, 05:40 PM] Mahit Agarwal: Keys handed over to guard and flat cleaned. Please refund my ₹54,000 deposit (Paid via UPI Ref 521489632541).
+[28/10/2026, 02:15 PM] Landlord Sharma Ji: I am cutting ₹32,000 for full flat painting, acid deep cleaning and bathroom fittings. Take remaining ₹22,000 or leave it. No bills will be given.</textarea>
+
+          <button onclick="parseWhatsAppEvidence()" class="w-full bg-slate-900 dark:bg-indigo-600 hover:opacity-95 text-white font-semibold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition">
+            <i class="fa-brands fa-whatsapp text-emerald-400 text-sm"></i> Extract Legal Timeline &amp; Admissions
+          </button>
+
+          <!-- Extracted Timeline Milestones -->
+          <div id="whatsapp-timeline-output" class="space-y-2.5 pt-2">
+            <!-- Populated by app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 4: AUTONOMOUS WEB AGENT — HYPERLOCAL MARKET RATE SCRAPER
+         =================================================================== -->
+    <section id="tab-scraper" class="workspace-pane space-y-6">
+      <div class="fluent-island rounded-2xl p-6 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">Module 03 • Autonomous Web Research Agent</span>
+            <h2 class="text-2xl font-display font-bold text-slate-900 dark:text-white">Hyperlocal Repair &amp; Cleaning Fair-Market Benchmark</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Scrapes live standardized pricing from Urban Company, NoBroker Home Services &amp; local verified vendors to counter inflated landlord deductions</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="scraper-city-select" onchange="runWebScraperAgent()" class="text-xs font-semibold bg-slate-100 dark:bg-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 outline-none">
+              <option value="Noida Sector 62 / 75">📍 Noida Sector 62 / 75 (UP)</option>
+              <option value="Bengaluru HSR / Whitefield">📍 Bengaluru HSR / Whitefield (KA)</option>
+              <option value="Mumbai Andheri / Powai">📍 Mumbai Andheri / Powai (MH)</option>
+              <option value="Pune Hinjewadi / Baner">📍 Pune Hinjewadi / Baner (MH)</option>
+              <option value="Delhi NCR / Gurugram">📍 Delhi NCR / Gurugram (DL)</option>
+            </select>
+            <button onclick="runWebScraperAgent()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow flex items-center gap-2 transition">
+              <i class="fa-solid fa-rotate"></i> Dispatch Autonomous Web Agent
+            </button>
+          </div>
+        </div>
+
+        <!-- Informational Rate Benchmark Disclaimer -->
+        <div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
+          <i class="fa-solid fa-circle-info text-amber-600 dark:text-amber-400 text-sm mt-0.5"></i>
+          <div class="space-y-0.5">
+            <strong>Informational Rate Benchmarks:</strong>
+            <p class="text-[11px] leading-relaxed opacity-90">Market rate comparisons reflect indicative repair costs from regional service aggregators (Urban Company and local contractor indexes). In security deposit disputes under the Model Tenancy Act 2021, the lessor bears the burden of establishing tenant-caused damage beyond normal wear-and-tear and providing itemized GST invoices.</p>
+          </div>
+        </div>
+
+        <!-- Live Agent Terminal Output -->
+        <div class="rounded-2xl bg-slate-950 text-slate-200 p-4 font-mono-code text-xs border border-slate-800 shadow-inner">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800 text-[11px] text-slate-400">
+            <span><i class="fa-solid fa-terminal text-emerald-400 mr-1.5"></i> kiraayashield-web-agent://hyperlocal-rate-scraper</span>
+            <span id="scraper-status-pill" class="text-emerald-400">● 4 Sources Indexed</span>
+          </div>
+          <div id="scraper-terminal-logs" class="space-y-1 max-h-28 overflow-y-auto text-[11px]">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Comparison Data Table -->
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 dark:bg-slate-800/90 text-[11px] uppercase tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+                <th class="py-3.5 px-4">Deduction Line Item</th>
+                <th class="py-3.5 px-4">Landlord Claim (₹)</th>
+                <th class="py-3.5 px-4">Urban Company Rate (₹)</th>
+                <th class="py-3.5 px-4">Local Tier-1 Avg (₹)</th>
+                <th class="py-3.5 px-4">Legal Status (MTA 2021)</th>
+                <th class="py-3.5 px-4 text-right">Illegitimate Overcharge</th>
+              </tr>
+            </thead>
+            <tbody id="scraper-rates-tbody" class="divide-y divide-slate-200/70 dark:divide-slate-800 text-xs">
+              <!-- Populated by app.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add Custom Deduction Line Item -->
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex flex-wrap items-end gap-3">
+          <div class="flex-1 min-w-[180px]">
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Add Custom Landlord Deduction Item</label>
+            <input id="custom-item-name" type="text" placeholder="e.g., Curtain Dry Cleaning / Geyser Service" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs outline-none" />
+          </div>
+          <div class="w-36">
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Landlord Claim (₹)</label>
+            <input id="custom-item-claim" type="number" placeholder="4500" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs outline-none" />
+          </div>
+          <div class="w-44">
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Wear &amp; Tear Category</label>
+            <select id="custom-item-exempt" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs outline-none">
+              <option value="true">Exempt (Normal Wear &amp; Tear)</option>
+              <option value="false">Tenant Liable (Fair Market Rate)</option>
+            </select>
+          </div>
+          <button onclick="addCustomScraperItem()" class="bg-slate-900 dark:bg-indigo-600 text-white text-xs font-semibold px-4 py-2 rounded-xl hover:opacity-90 transition">
+            <i class="fa-solid fa-plus mr-1"></i> Add &amp; Benchmark
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 5: REGULATORY COMPLAINT & LEGAL NOTICE STUDIO
+         =================================================================== -->
+    <section id="tab-redressal" class="workspace-pane space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left 5 Cols: Case Details Form & Direct Filing Triggers -->
+        <div class="lg:col-span-5 fluent-island rounded-2xl p-6 space-y-4">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Module 04 • Grievance Redressal Pipeline</span>
+            <h2 class="text-xl font-display font-bold text-slate-900 dark:text-white">Complaint &amp; Legal Notice Parameters</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Auto-populates statutory demands for NCH (INGRAM), e-Daakhil &amp; State Rent Authority</p>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Tenant Full Name</label>
+                <input id="form-tenant-name" type="text" value="Mahit Agarwal" oninput="renderLegalDocument()" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none" />
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Landlord / PG Entity Name</label>
+                <input id="form-landlord-name" type="text" value="Rajesh Sharma (Flat 402 Owner)" oninput="renderLegalDocument()" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Rented Premises Address</label>
+              <input id="form-property-addr" type="text" value="Flat 402, Tower B, Sector 75, Noida, Uttar Pradesh - 201301" oninput="renderLegalDocument()" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">UPI / NEFT Deposit Proof Ref</label>
+                <input id="form-upi-ref" type="text" value="UPI-521489632541 (HDFC)" oninput="renderLegalDocument()" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none font-mono-code" />
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Handover / Vacating Date</label>
+                <input id="form-vacate-date" type="date" value="2026-10-26" oninput="renderLegalDocument()" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">Select Output Format</label>
+              <div class="grid grid-cols-3 gap-2">
+                <button onclick="setDocTemplate('notice')" id="tpl-btn-notice" class="py-2 px-2 rounded-xl bg-indigo-600 text-white font-semibold text-[11px] text-center">1. Legal Notice</button>
+                <button onclick="setDocTemplate('nch')" id="tpl-btn-nch" class="py-2 px-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-[11px] text-center">2. NCH INGRAM</button>
+                <button onclick="setDocTemplate('edaakhil')" id="tpl-btn-edaakhil" class="py-2 px-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-[11px] text-center">3. e-Daakhil Brief</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-2 space-y-2.5">
+            <button onclick="saveCurrentCaseToDB()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:opacity-90 font-semibold py-2.5 rounded-xl shadow flex items-center justify-center gap-2 text-xs transition">
+              <i class="fa-solid fa-cloud-arrow-up text-indigo-400 dark:text-indigo-600"></i> Save Case Details to MongoDB
+            </button>
+            <button onclick="window.print()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl shadow flex items-center justify-center gap-2 text-xs transition">
+              <i class="fa-solid fa-file-pdf"></i> Print / Save Official Legal PDF
+            </button>
+            <!-- Human Review Note -->
+            <div class="p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-[11px] text-indigo-800 dark:text-indigo-300 flex items-center gap-2">
+              <i class="fa-solid fa-user-check text-indigo-500"></i>
+              <span><strong>Tenant Review Required:</strong> Review all drafted notices and verify facts before dispatching to the lessor.</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="copyLegalDocument()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition">
+                <i class="fa-regular fa-copy"></i> Copy Text
+              </button>
+              <button onclick="downloadComplaintBundle()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition">
+                <i class="fa-solid fa-download"></i> Download .TXT
+              </button>
+            </div>
+            <button onclick="simulateNCHFilingAPI()" id="btn-nch-api" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow-md flex items-center justify-center gap-2 text-xs transition">
+              <i class="fa-solid fa-file-export"></i> Export NCH INGRAM Grievance Dossier (Manual Filing Format)
+            </button>
+            <div id="nch-ticket-banner" class="hidden p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs font-mono-code"></div>
+          </div>
+        </div>
+
+        <!-- Right 7 Cols: Live Printable Document Preview -->
+        <div class="lg:col-span-7 fluent-island rounded-2xl p-6">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <span id="doc-preview-title" class="text-xs font-bold uppercase tracking-wider text-slate-500">Official Pre-Litigation Legal Notice (RPAD / WhatsApp / Email Service)</span>
+            </div>
+            <span class="text-[11px] font-mono-code text-indigo-600 dark:text-indigo-400">Sec 11 MTA + 18% Interest</span>
+          </div>
+
+          <div id="printable-legal-doc" class="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-6 sm:p-8 shadow-inner font-serif text-slate-900 dark:text-slate-100 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap max-h-[560px] overflow-y-auto">
+            <!-- Dynamically rendered by app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 6: SMART DEPOSIT ESCROW & LANDLORD REPUTATION REGISTRY
+         =================================================================== -->
+    <section id="tab-escrow" class="workspace-pane space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left 6 Cols: Tripartite Smart Escrow Simulation -->
+        <div class="lg:col-span-6 fluent-island rounded-2xl p-6 space-y-5">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Module 05 • Preventive Architecture Concept</span>
+            <h2 class="text-xl font-display font-bold text-slate-900 dark:text-white">Smart Escrow Tripartite Simulation &amp; Architecture Prototype</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Workflow Simulation: Demonstrates an escrow architectural model where rental deposits are maintained in neutral holding during the tenancy term, and released automatically on handover day unless verified damages are submitted.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-900 text-white space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-mono-code uppercase text-indigo-400">Workflow Simulation ID: SIM-ESCROW-2026-994A</span>
+                <h4 class="font-display font-bold text-lg">Simulated Neutral Holding Vault: ₹36,000 (2x Rent Cap)</h4>
+              </div>
+              <span id="escrow-state-badge" class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-3 py-1 rounded-full text-xs font-bold">1 / 3 Approvals</span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5 text-center text-xs">
+              <div id="sig-tenant" class="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40">
+                <i class="fa-solid fa-user-check text-emerald-400 text-base mb-1"></i>
+                <div class="font-bold">1. Tenant Key</div>
+                <div class="text-[10px] text-emerald-300">Signed (Handover)</div>
+              </div>
+              <div id="sig-landlord" class="p-3 rounded-xl bg-rose-500/20 border border-rose-500/40">
+                <i class="fa-solid fa-user-xmark text-rose-400 text-base mb-1"></i>
+                <div class="font-bold">2. Landlord Key</div>
+                <div class="text-[10px] text-rose-300">Disputed / Unresponsive</div>
+              </div>
+              <div id="sig-oracle" class="p-3 rounded-xl bg-slate-800 border border-slate-700">
+                <i class="fa-solid fa-robot text-indigo-400 text-base mb-1"></i>
+                <div class="font-bold">3. Handover Oracle</div>
+                <div id="sig-oracle-status" class="text-[10px] text-slate-400">Awaiting Trigger</div>
+              </div>
+            </div>
+
+            <button onclick="triggerEscrowOracleRelease()" class="w-full bg-gradient-to-r from-indigo-600 to-emerald-600 hover:opacity-95 text-white font-semibold py-2.5 rounded-xl text-xs shadow transition">
+              <i class="fa-solid fa-play mr-1"></i> Simulate Automated Escrow Release Workflow
+            </button>
+          </div>
+        </div>
+
+        <!-- Right 6 Cols: Synthetic Landlord & Society Dispute Registry -->
+        <div class="lg:col-span-6 fluent-island rounded-2xl p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">Synthetic Transparency Demonstrator</span>
+              <h2 class="text-xl font-display font-bold text-slate-900 dark:text-white">Simulated Landlord &amp; Society Dispute Registry</h2>
+              <p class="text-[11px] text-slate-500 mt-0.5">Synthetic research models demonstrating community deposit withholding tracking.</p>
+            </div>
+            <input type="text" placeholder="Filter cluster..." oninput="filterLandlordRegistry(this.value)" class="text-xs px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none" />
+          </div>
+
+          <div id="landlord-registry-list" class="space-y-3 max-h-80 overflow-y-auto pr-1">
+            <!-- Populated by app.js -->
+          </div>
+        </div>
+            <input type="text" placeholder="Filter society or PG..." oninput="filterLandlordRegistry(this.value)" class="text-xs px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none" />
+          </div>
+
+          <div id="landlord-registry-list" class="space-y-3 max-h-80 overflow-y-auto pr-1">
+            <!-- Populated by app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MICROSOFT FLUENT 2 AI COPILOT SLIDE-OVER DRAWER -->
+  <aside id="copilot-drawer" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="p-4 bg-gradient-to-r from-indigo-600 to-sky-600 text-white flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+        <div>
+          <h3 class="font-display font-bold text-sm">KiraayaShield Legal Copilot</h3>
+          <p class="text-[10px] text-indigo-100">Trained on Model Tenancy Act &amp; Consumer Forum Precedents</p>
+        </div>
+      </div>
+      <button onclick="toggleCopilot()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div id="copilot-messages" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
+      <div id="copilot-welcome-card" class="p-3 rounded-2xl bg-indigo-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+        👋 <strong>Welcome to KiraayaShield Legal Copilot.</strong> Powered by Groq AI (<code>openai/gpt-oss-120b</code>). Ask any question regarding Indian rental laws, security deposit disputes, Model Tenancy Act 2021, Consumer Protection Act, or your active case evidence.
+      </div>
+      <div id="copilot-quick-prompts" class="flex flex-wrap gap-1.5">
+        <button onclick="askCopilot('Can landlord cut 1 month rent for painting?')" class="text-[11px] bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-indigo-950/60 px-2.5 py-1.5 rounded-lg text-indigo-600 dark:text-indigo-400 font-medium transition">Can landlord cut 1 month rent for painting?</button>
+        <button onclick="askCopilot('How to file on National Consumer Helpline?')" class="text-[11px] bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-indigo-950/60 px-2.5 py-1.5 rounded-lg text-indigo-600 dark:text-indigo-400 font-medium transition">How to file on NCH INGRAM?</button>
+        <button onclick="askCopilot('What if PG owner refuses to give receipt?')" class="text-[11px] bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-indigo-950/60 px-2.5 py-1.5 rounded-lg text-indigo-600 dark:text-indigo-400 font-medium transition">PG owner refuses receipt?</button>
+      </div>
+    </div>
+
+    <div class="p-3 border-t border-slate-200 dark:border-slate-800 flex gap-2">
+      <input id="copilot-input" type="text" placeholder="Ask about tenant laws, lock-in, notice..." onkeydown="if(event.key==='Enter') sendCopilotInput()" class="flex-1 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs outline-none" />
+      <button id="copilot-send-btn" onclick="sendCopilotInput()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl text-xs font-semibold disabled:opacity-50 transition">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- FOOTER -->
+  <footer class="mt-12 border-t border-slate-200/80 dark:border-slate-800 py-6 px-4 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>
+        <strong>KiraayaShield Pro v2.0</strong> • Built for the <em>Hack the Unseen</em> Hackathon
+      </div>
+      <div class="flex items-center gap-4">
+        <span><i class="fa-solid fa-Scale-balanced text-indigo-500 mr-1"></i> Empowering Tenants Through Evidence, Not Legal Intimidation</span>
+        <a href="legacy_v1_show/index.html" target="_blank" class="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold">v1 Show Mockup</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

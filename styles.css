@@ -1,0 +1,165 @@
+/* ==========================================================================
+   KiraayaShield Pro v2.0 — Google Material 3 + Microsoft Fluent 2 Design System
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+
+:root {
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --ease-m3: cubic-bezier(0.2, 0, 0, 1);
+}
+
+body {
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono-code {
+  font-family: var(--font-mono);
+}
+
+/* Ambient Google M3 Mesh Background */
+.ambient-mesh {
+  background-color: #f8fafc;
+  background-image: 
+    radial-gradient(at 12% 10%, rgba(79, 70, 229, 0.10) 0px, transparent 48%),
+    radial-gradient(at 88% 14%, rgba(14, 165, 233, 0.10) 0px, transparent 45%),
+    radial-gradient(at 52% 85%, rgba(16, 185, 129, 0.07) 0px, transparent 50%);
+}
+
+.dark .ambient-mesh {
+  background-color: #0b0f19;
+  background-image: 
+    radial-gradient(at 12% 10%, rgba(99, 102, 241, 0.16) 0px, transparent 48%),
+    radial-gradient(at 88% 14%, rgba(14, 165, 233, 0.12) 0px, transparent 45%),
+    radial-gradient(at 52% 85%, rgba(16, 185, 129, 0.09) 0px, transparent 50%);
+}
+
+/* Fluent 2 Acrylic / Glass Island Cards */
+.fluent-island {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 24px -4px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  transition: all 0.28s var(--ease-m3);
+}
+
+.dark .fluent-island {
+  background: rgba(17, 24, 39, 0.84);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+  box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.45);
+}
+
+.fluent-island:hover {
+  box-shadow: 0 12px 32px -6px rgba(79, 70, 229, 0.09), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+}
+
+/* Google M3 Pill Navigation */
+.m3-pill-tab {
+  position: relative;
+  transition: all 0.22s var(--ease-m3);
+}
+
+.m3-pill-tab.active {
+  background: #e0e7ff;
+  color: #3730a3;
+  font-weight: 600;
+}
+
+.dark .m3-pill-tab.active {
+  background: rgba(79, 70, 229, 0.28);
+  color: #a5b4fc;
+}
+
+/* Smooth Tab View Transitions */
+.workspace-pane {
+  display: none;
+  animation: m3SlideUp 0.35s var(--ease-m3) forwards;
+}
+
+.workspace-pane.active {
+  display: block;
+}
+
+@keyframes m3SlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* CV Bounding Box Pulse */
+@keyframes pulseScan {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.015); }
+}
+
+.cv-bbox {
+  animation: pulseScan 2.4s infinite ease-in-out;
+}
+
+/* Laser Scanner Line */
+@keyframes laserSweep {
+  0% { top: 4%; opacity: 0.9; }
+  50% { top: 92%; opacity: 1; }
+  100% { top: 4%; opacity: 0.9; }
+}
+
+.laser-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #4f46e5, #06b6d4, transparent);
+  box-shadow: 0 0 12px 2px rgba(79, 70, 229, 0.65);
+  animation: laserSweep 3.2s infinite ease-in-out;
+  pointer-events: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.45);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.7);
+}
+
+/* Print-specific clean layout for Legal Notice PDF export */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-legal-doc, #printable-legal-doc * {
+    visibility: visible;
+  }
+  #printable-legal-doc {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none !important;
+    border: none !important;
+    background: white !important;
+    color: black !important;
+    padding: 24px !important;
+  }
+}

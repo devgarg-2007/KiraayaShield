@@ -1,0 +1,18 @@
+{
+  "name": "kiraayashield-pro",
+  "version": "2.0.0",
+  "description": "KiraayaShield: AI-Powered Tenant Rights & Deposit Recovery Agent (Hack the Unseen)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "npx serve . -l 3000",
+    "vercel-build": "echo 'Static & Serverless build ready'"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
