@@ -20,7 +20,9 @@ from typing import List, Optional
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query, UploadFile, File, Form
+import urllib.parse
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.types import ASGIApp, Scope, Receive, Send
 from fastapi.responses import FileResponse
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -99,6 +101,54 @@ app = FastAPI(
 # CORS — allow the configured frontend origins (default: localhost:3000 and 127.0.0.1:3000)
 cors_env = os.getenv("CORS_ORIGIN", "http://localhost:3000,http://127.0.0.1:3000")
 allowed_origins = [orig.strip() for orig in cors_env.split(",") if orig.strip()]
+class VercelPathMiddleware:
+    """
+    ASGI middleware ensuring that Vercel serverless request rewrites
+    are correctly mapped back to the intended FastAPI route paths.
+
+    Handles:
+      1. x-matched-path header (injected by Vercel edge proxy)
+      2. __path__ query parameter (injected by vercel.json rewrite)
+      3. /api/index.py, /api/index, /api root GET fallback -> /health
+    """
+
+    def __init__(self, app: ASGIApp):
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send):
+        if scope["type"] == "http":
+            headers = dict(scope.get("headers", []))
+
+            # 1. Check for x-matched-path header injected by Vercel
+            matched = headers.get(b"x-matched-path")
+            restored = None
+            if matched:
+                try:
+                    decoded = matched.decode("utf-8")
+                    if decoded and not decoded.startswith("/api/index"):
+                        restored = decoded
+                except Exception:
+                    pass
+
+            # 2. Check for __path__ query param injected by vercel.json
+            raw_qs = scope.get("query_string", b"").decode("utf-8", errors="ignore")
+            if "__path__=" in raw_qs:
+                params = urllib.parse.parse_qs(raw_qs, keep_blank_values=True)
+                if "__path__" in params:
+                    restored = "/" + params.pop("__path__")[0].lstrip("/")
+                    scope["query_string"] = urllib.parse.urlencode(params, doseq=True).encode("utf-8")
+
+            if restored:
+                scope["path"] = restored
+                scope["raw_path"] = restored.encode("utf-8")
+            elif scope.get("path") in ("/api/index.py", "/api/index", "/api", "/api/"):
+                if scope.get("method") == "GET":
+                    scope["path"] = "/health"
+                    scope["raw_path"] = b"/health"
+
+        await self.app(scope, receive, send)
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
@@ -106,6 +156,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+app.add_middleware(VercelPathMiddleware)
 
 
 # ---------------------------------------------------------------------------
@@ -159,6 +210,10 @@ def _evidence_doc_to_response(doc: dict) -> dict:
 # Health check
 # ---------------------------------------------------------------------------
 @app.get("/health")
+@app.get("/api/health")
+@app.get("/api/index.py")
+@app.get("/api/index")
+@app.get("/api")
 def health_check():
     db_status = check_connection()
     return {
@@ -167,6 +222,8 @@ def health_check():
         "version": "2.5.0",
         "timestamp": _utcnow().isoformat(),
         "database": db_status,
+        "database_mode": db_status.get("database_mode", "unknown"),
+        "mongodb": db_status.get("mongodb", "unknown"),
     }
 
 

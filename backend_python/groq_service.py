@@ -157,8 +157,10 @@ def _deterministic_fallback_assessment(
     if deductions:
         for idx, d in enumerate(deductions, 1):
             name = d.get("item", f"Item #{idx}")
-            claim = float(d.get("landlord_claim", d.get("landlordClaim", 0.0)))
-            fair = float(d.get("fair_rate", d.get("fairRate", claim * 0.3)))
+            claim_val = d.get("landlord_claim") if d.get("landlord_claim") is not None else d.get("landlordClaim", 0.0)
+            claim = float(claim_val) if claim_val is not None else 0.0
+            fair_val = d.get("fair_rate") if d.get("fair_rate") is not None else d.get("fairRate")
+            fair = float(fair_val) if fair_val is not None else (claim * 0.3)
             exempt = d.get("exempt", False)
 
             if "paint" in name.lower() or exempt:
@@ -332,6 +334,17 @@ def analyze_lease_with_groq(
         except (GroqError, json.JSONDecodeError, Exception) as exc:
             logger.warning("Groq call failed with model %s: %s", model_name, exc)
             continue
+
+    logger.warning("All Groq models failed. Falling back to deterministic statutory legal assessment.")
+    return _deterministic_fallback_assessment(
+        lease_text=lease_text,
+        monthly_rent=monthly_rent,
+        deposit_paid=deposit_paid,
+        city=city,
+        deductions=deductions,
+        case_id=case_id,
+    )
+
 
 class GroqServiceError(Exception):
     """Raised when Groq API encounters a failure and cannot generate a response."""

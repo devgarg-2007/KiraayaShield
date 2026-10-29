@@ -4,11 +4,15 @@
   "rewrites": [
     {
       "source": "/health",
-      "destination": "/api/index.py"
+      "destination": "/api/index.py?__path__=/health"
+    },
+    {
+      "source": "/api",
+      "destination": "/api/index.py?__path__=/health"
     },
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.py"
+      "destination": "/api/index.py?__path__=/api/$1"
     }
   ]
 }
