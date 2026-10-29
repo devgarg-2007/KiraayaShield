@@ -1,13 +1,16 @@
-/* ==========================================================================
-   KiraayaShield Pro v2.0 — Full-Stack Interactive Client & Hybrid API Engine
-   ========================================================================== */
-
-// ---------------------------------------------------------------------------
 // API Configuration
-// ---------------------------------------------------------------------------
-// When served on port 8000 by FastAPI, use relative URLs.
-// When served on port 3000 (Node / static), use http://localhost:8000.
-const API_BASE = (window.location.port === '8000') ? '' : 'http://localhost:8000';
+const IS_LOCAL =
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1';
+
+const API_BASE = IS_LOCAL
+  ? (window.location.port === '8000' ? '' : 'http://localhost:8000')
+  : '';
+
+function apiUrl(path) {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${API_BASE}${normalizedPath}`;
+}
 
 // ---------------------------------------------------------------------------
 // Global State
@@ -1275,7 +1278,7 @@ async function askCopilot(question) {
   if (sendBtn) sendBtn.disabled = true;
 
   try {
-    const res = await fetch(`${API_BASE}/api/copilot/chat`, {
+    const res = await fetch(apiUrl('/api/copilot/chat'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
